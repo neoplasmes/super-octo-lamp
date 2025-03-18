@@ -11,7 +11,7 @@ app.use(cors({
 }));
 
 app.get('/', (req, res) => {
-    res.status(200).send({ message: "let's go bitch" });
+    res.status(200).send({ message: 'let\'s go bitch' });
 });
 
 app.listen(3500, () => {
