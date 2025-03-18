@@ -3,6 +3,9 @@ import { redisClient } from '../config/redisClient.js';
 
 /**
  * @typedef {'OK' | null} redisDummyResponse
+ * @typedef {function(number): number} NumericUpdateFunction
+ * @typedef {function(string): string} TextUpdateFunction
+ * @typedef {NumericUpdateFunction | TextUpdateFunction} UpdateFunction
  */
 
 
@@ -22,6 +25,7 @@ export class RedisJsonRepo {
     constructor() {
         this.redisClient = redisClient;
     }
+
     /**
      * Создаёт индекс в Redis'е по неким JSON документам. Ловит ошибку типов.
      * НЕ ЛОВИТ ОШИБКИ ЗАПРОСА. ЭТО НЕ ОТНОСИТСЯ К МОДЕЛИ.
@@ -60,6 +64,14 @@ export class RedisJsonRepo {
     }
 
     /**
+     * @param {string} indexName 
+     * @returns информация об индексе
+     */
+    async getIndexInfo(indexName) {
+        return await this.redisClient.ft.info(this.withIdx(indexName));
+    }
+
+    /**
      * Удаляет индекс
      * @param {string} namespace
      * @param {boolean} withDocuments если указан как true то все проидексированные документы тоже удалятся.
@@ -82,6 +94,48 @@ export class RedisJsonRepo {
         await this.redisClient.json.set(`${namespace}:${id}`, '$', data); 
     }
 
+    /**
+     * Функция, имитирующая UPDATE WHERE
+     * @param {string} namespace 
+     * @param {string} whereQuery 
+     * @param {Object.<string, string | number | UpdateFunction>} updateInstructions ключ - название поля (типо колонки), значение - новое значение
+     */
+    async updateDocuments(namespace, whereQuery, updateInstructions) {
+        const documentsToUpdate = await this.getDocumentsByQuery(namespace, whereQuery);
+
+        if (documentsToUpdate.length === 0) {
+            return 0;
+        }
+
+        // создаём типо "транзакцию" в редисе
+        const transaction = this.redisClient.multi();
+        documentsToUpdate.forEach(doc => {
+            const multiSetArgs = Array.from(Object.entries(updateInstructions)).map(
+                ([path, instruction]) => {
+                    if (doc.value[path] === undefined) {
+                        throw new Error(`There is no field ${path} in ${this.withIdx(namespace)} namespace`)
+                    }
+
+                    let newValue = undefined;
+                    if (typeof instruction === 'function') {
+                        newValue = instruction(doc.value[path]);
+                    } else {
+                        newValue = instruction;
+                    }
+
+                    return {
+                        key: doc.id,
+                        path: `$.${path}`,
+                        value: newValue
+                    }
+                }
+            )
+
+            transaction.json.mSet(multiSetArgs);
+        });
+
+        return await transaction.exec();
+    }
     // //Вот как будто нахер не нужен этот метод
     // /**
     //  * Получить 1 документ в виде JSON
@@ -134,7 +188,7 @@ export class RedisJsonRepo {
      * @param {string} namespace название пространства имён (индекса), в котором хранятся документы 
      */
     async countDocumentsInIndex(namespace) {
-        const namespaceInfo = await this.redisClient.ft.info(withIdx(namespace));
+        const namespaceInfo = await this.getIndexInfo(namespace);
         return Number(namespaceInfo.numDocs);
     }
 }

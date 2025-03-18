@@ -15,8 +15,9 @@ export class CasesService {
 
     /**
      * Метод создаёт в базе данных индексы и стартовый набор документов.
+     * @param {boolean} withFlush если true, то сначала всё удалится к чертям.
      */
-    async createInitialData() {
+    async createInitialData(withFlush) {
         await Promise.all([
             this.repository.createIndex(workplacesNamespace, workplacesSchema),
             this.repository.createIndex(transportCompaniesNamespace, transportCompaniesSchema),
