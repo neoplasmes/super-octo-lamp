@@ -6,8 +6,16 @@ import { AggregateSteps } from 'redis';
 //Вот эту фнкцию потом инжектим в AdvancedCasesRepo
 
 /**
- * типе и месте расположения техники, с максимальным количеством более 3;
- * @param {RedisJsonRepo} repoCtx контекст вызова функции. Юзается, чтобы просто не прописывать .bind(this)
+ * @description
+ * Информация о типе и месте расположения техники, с максимальным количеством более 3;
+ * 
+ * @param {RedisJsonRepo} repoCtx контекст вызова функции. Юзается, чтобы просто не прописывать .bind(this).<br>
+ * 
+ * См. {@link https://github.com/neoplasmes/super-octo-lamp/blob/master/server/repositories/redisJsonRepo.js#L18}
+ * чтобы понять вообще смысл используемых функций.<br>
+ * 
+ * См. {@link https://github.com/neoplasmes/super-octo-lamp/blob/master/server/repositories/advancedCasesRepository/advancedCasesRepo.js} и
+ * {@link https://github.com/neoplasmes/super-octo-lamp/blob/master/server/services/casesService.js#L62} чтобы понять куда эти функции перенаправляются.
  */
 async function caseA (repoCtx) {
     const result = await repoCtx.getDocumentsByQuery(vehiclesNamespace, '@maxCount:[4 +inf]');
@@ -16,8 +24,9 @@ async function caseA (repoCtx) {
 }
 
 /**
- * автопредприятиях с размером комиссионных более 5% и расположенных не в Н.Новгроде. Вывести также и размер комиссионных. Отсортировать по нему полученные результаты;
- * @param {RedisJsonRepo} repoCtx контекст вызова функции. Юзается, чтобы просто не прописывать .bind(this)
+ * Инфа об автопредприятиях с размером комиссионных более 5% и расположенных не в Н.Новгроде. Вывести также и размер комиссионных.<br>
+ * Отсортировать по нему полученные результаты;
+ * @param {RedisJsonRepo} repoCtx
  */
 async function caseB (repoCtx) {
     const { results } = await repoCtx.redisClient.ft.aggregate(repoCtx.withIdx(transportCompaniesNamespace), '*', {
@@ -37,8 +46,8 @@ async function caseB (repoCtx) {
 }
 
 /**
- * местах работы, расположенных в Ильино.
- * @param {RedisJsonRepo} repoCtx контекст вызова функции. Юзается, чтобы просто не прописывать .bind(this)
+ * Инфа о местах работы, расположенных в Ильино.
+ * @param {RedisJsonRepo} repoCtx
  */
 async function caseC (repoCtx) {
     const result = await repoCtx.getDocumentsByQuery(workplacesNamespace, '@address:\'Ильино\'');

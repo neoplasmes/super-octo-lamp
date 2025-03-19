@@ -6,6 +6,7 @@ import { redisClient } from '../config/redisClient.js';
  * @typedef {function(number): number} NumericUpdateFunction
  * @typedef {function(string): string} TextUpdateFunction
  * @typedef {NumericUpdateFunction | TextUpdateFunction} UpdateFunction
+ * @typedef {Promise.<{ id: string, value: Object<string, number | string> }[]>} ActualRetrievedJSON
  */
 
 
@@ -143,19 +144,23 @@ export class RedisJsonRepo {
      * "@<fieldName>:<values че-то там>" - для более конкретных результатов.
      * @param {string} namespace 
      * @param {string} query 
-     * @param {number} limit 
+     * @param {string[]} fieldsToReturn 
+     * @returns {Promise<ActualRetrievedJSON>}
      */
-    async getDocumentsByQuery(namespace, query, limit = undefined) {
-        const response = await this.redisClient.ft.search(this.withIdx(namespace), query, {
-            LIMIT: { from: 0, size: limit ?? maxLimit }
-        });
+    async getDocumentsByQuery(namespace, query, fieldsToReturn = []) {
+        const optionsObject = fieldsToReturn.length === 0 ? {} : {
+            RETURN: fieldsToReturn
+        };
+
+        const response = await this.redisClient.ft.search(this.withIdx(namespace), query, optionsObject);
 
         return response.documents;
     }
 
     /**
      * Функция делает запрос необходимых документов и превращает их в объект Map структуры 'id': 'data'.
-     * Выбрана map чтобы было удобно доставать данные по id
+     * Выбрана map чтобы было удобно доставать данные по id и для оптимизации скорости этого извлечения по id.
+     * Array.prototype.indexOf - медленный (O(n));
      * @param {string} namespace 
      * @param {string} query 
      * @returns {Promise.<Map.<string, Object.<string, string | number>>} Map структуры 'id': 'data'

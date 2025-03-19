@@ -3,11 +3,21 @@ import { transportCompaniesNamespace } from '../../../model/transportCompanies.j
 import { vehiclesNamespace } from '../../../model/vehicles.js';
 import { workplacesNamespace } from '../../../model/workplaces.js';
 import { RedisJsonRepo } from '../../redisJsonRepo.js';
-//Вот эту фнкцию потом инжектим в AdvancedCasesRepo
+
+
+// Все эти функции вставляются в advancedCasesRepo
 
 /**
- * название места работы,  техника, количество, оплата. Отсортировать по сумме оплаты и месту работы;
- * @param {RedisJsonRepo} repoCtx контекст вызова функции. Юзается, чтобы просто не прописывать .bind(this)
+ * @description
+ * название места работы,  техника, количество, оплата. Отсортировать по сумме оплаты и месту работы
+ * 
+ * @param {RedisJsonRepo} repoCtx контекст вызова функции. Юзается, чтобы просто не прописывать .bind(this).<br>
+ * 
+ * См. {@link https://github.com/neoplasmes/super-octo-lamp/blob/master/server/repositories/redisJsonRepo.js#L18}
+ * чтобы понять вообще смысл используемых функций.<br>
+ * 
+ * См. {@link https://github.com/neoplasmes/super-octo-lamp/blob/master/server/repositories/advancedCasesRepository/advancedCasesRepo.js} и
+ * {@link https://github.com/neoplasmes/super-octo-lamp/blob/master/server/services/casesService.js#L62} чтобы понять куда эти функции перенаправляются.
  */
 async function caseA (repoCtx) {
     // в Redis невозможно сымитировать JOIN'ы, поэтому расчёт будет вестись в коде
@@ -42,7 +52,7 @@ async function caseA (repoCtx) {
 
 /**
  * номер, дату, название автопредприятия.
- * @param {RedisJsonRepo} repoCtx контекст вызова функции. Юзается, чтобы просто не прописывать .bind(this)
+ * @param {RedisJsonRepo} repoCtx
  */
 async function caseB (repoCtx) {
     // в Redis невозможно сымитировать JOIN'ы, поэтому расчёт будет вестись в коде
