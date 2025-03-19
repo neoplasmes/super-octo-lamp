@@ -45,7 +45,7 @@ mockTableRouter.post('/create', async (req, res) => {
         res.status(404).json({
             msg: 'error, creating a table',
             errorLog: e.message,
-        })
+        });
     }
 });
 

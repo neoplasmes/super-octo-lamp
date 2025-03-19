@@ -3,6 +3,7 @@ import cors from 'cors';
 import { CasesService } from './services/casesService.js';
 import { workplacesNamespace } from './model/workplaces.js';
 import { mockTableController } from './controllers/mockTableController.js';
+import { casesController } from './controllers/casesController.js';
 
 const app = express();
 
@@ -16,14 +17,15 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/tables', mockTableController);
+app.use('/cases', casesController);
 
 app.get('/', (req, res) => {
     res.status(200).send({ message: 'let\'s go bitch' });
 });
 
-// const test = new CasesService();
-// await test.repository.redisClient.flushAll();
-// await test.createInitialData();
+const test = new CasesService();
+await test.repository.redisClient.flushAll();
+await test.createInitialData(); 
 
 // await test.repository.updateDocuments(workplacesNamespace, '@benefit:[0 0]', {
 //     name: str => str + 'функция работает',

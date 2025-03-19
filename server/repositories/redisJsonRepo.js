@@ -41,7 +41,7 @@ export class RedisJsonRepo {
                 throw new Error(`Incorrect field type recieved: ${type}`);
             }
 
-            validationSchema[`$.${name}`] = { type: type, AS: name }; //ИЗ-ЗА ТОГО ЧТО Я НЕ УКАЗАЛ AS: name Я ПРОСИДЕЛ ПОЛЧАСА И ТУПИЛ В ЭКРАН
+            validationSchema[`$.${name}`] = { type: type, AS: name, SORTABLE: true }; //ИЗ-ЗА ТОГО ЧТО Я НЕ УКАЗАЛ AS: name Я ПРОСИДЕЛ ПОЛЧАСА И ТУПИЛ В ЭКРАН
             /*
             На выходе получаем че то типо:
             {
@@ -136,18 +136,6 @@ export class RedisJsonRepo {
 
         return await transaction.exec();
     }
-    // //Вот как будто нахер не нужен этот метод
-    // /**
-    //  * Получить 1 документ в виде JSON
-    //  * @param {string} namespace 
-    //  * @param {number} id 
-    //  * @returns {Object}
-    //  */
-    // async getDocumentByID(namespace, id) {
-    //     const response = await this.redisClient.json.get(`${namespace}:${id}`);
-
-    //     return JSON.parse(response);
-    // }
 
     /**
      * Поиск по документам с помощью индексатора. 
@@ -164,6 +152,27 @@ export class RedisJsonRepo {
 
         return response.documents;
     }
+
+    /**
+     * Функция делает запрос необходимых документов и превращает их в объект Map структуры 'id': 'data'.
+     * Выбрана map чтобы было удобно доставать данные по id
+     * @param {string} namespace 
+     * @param {string} query 
+     * @returns {Promise.<Map.<string, Object.<string, string | number>>} Map структуры 'id': 'data'
+     */
+    async prepareDocumentsForJoin(namespace, query) {
+        const response = (await this.getDocumentsByQuery(namespace, query)).reduce(
+            (acc, { value }) => {
+                acc.set(value['id'], value);
+    
+                return acc;
+            },
+            new Map()
+        );
+
+        return response;
+    }
+
     /** 
      * Удалить всё, что совпало по search-query
      * @param {string} namespace 

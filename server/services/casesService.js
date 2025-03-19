@@ -2,7 +2,7 @@ import { ordersInitialValues, ordersNamespace, ordersSchema } from '../model/ord
 import { transportCompaniesInitialValues, transportCompaniesNamespace, transportCompaniesSchema } from '../model/transportCompanies.js';
 import { vehiclesInitialValues, vehiclesNamespace, vehiclesSchema } from '../model/vehicles.js';
 import { workplacesInitialValues, workplacesNamespace, workplacesSchema } from '../model/workplaces.js';
-import { RedisJsonRepo } from '../repositories/RedisJsonRepo.js';
+import { AdvancedCasesRepo } from '../repositories/advancedCasesRepository/advancedCasesRepo.js';
 
 export class CasesService {
     /**
@@ -10,7 +10,7 @@ export class CasesService {
      * мы просто втупую создаём объект.
      */
     constructor(documentsRepo = undefined) {
-        this.repository = new RedisJsonRepo();
+        this.repository = new AdvancedCasesRepo();
     }
 
     /**
@@ -52,5 +52,14 @@ export class CasesService {
         if (safetyCheck.includes(null)) {
             console.log('Вероятно, че-то не создалось')
         }
+    }
+
+    /**
+     * Маппер функций для решения кейсов
+     * @param {string} number 
+     * @param {string} letter 
+     */
+    async solveCase(number, letter) {
+        return await this.repository.casesFunctions[number][letter](this.repository);
     }
 }
