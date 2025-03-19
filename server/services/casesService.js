@@ -62,4 +62,19 @@ export class CasesService {
     async solveCase(number, letter) {
         return await this.repository.casesFunctions[number][letter](this.repository);
     }
+
+    /**
+     * Функция чтобы получить объект со всеми доступными кейсами
+     * @returns {Object<string, Array<string>>}
+     */
+    getCases() {
+        const cases = this.repository.casesFunctions;
+
+        const result = {};
+        for (const number in cases) {;
+            result[number] = Object.keys(cases[number]);
+        }
+
+        return result;
+    }
 }

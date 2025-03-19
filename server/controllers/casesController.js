@@ -13,6 +13,10 @@ import { CasesService } from '../services/casesService.js';
 const casesService = new CasesService();
 const casesRouter = Router();
 
+casesRouter.get('/info', async (_, res) => {
+    res.status(200).json(casesService.getCases());
+});
+
 casesRouter.get('/:number/:letter', async (req, res) => {
     const {number, letter} = req.params;
 

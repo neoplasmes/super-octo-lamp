@@ -144,17 +144,13 @@ export class RedisJsonRepo {
      * "@<fieldName>:<values че-то там>" - для более конкретных результатов.
      * @param {string} namespace 
      * @param {string} query 
-     * @param {string[]} fieldsToReturn 
+     * 
      * @returns {Promise<ActualRetrievedJSON>}
      */
-    async getDocumentsByQuery(namespace, query, fieldsToReturn = []) {
-        const optionsObject = fieldsToReturn.length === 0 ? {} : {
-            RETURN: fieldsToReturn
-        };
+    async getDocumentsByQuery(namespace, query) {
+        const {documents} = await this.redisClient.ft.search(this.withIdx(namespace), query);
 
-        const response = await this.redisClient.ft.search(this.withIdx(namespace), query, optionsObject);
-
-        return response.documents;
+        return documents;
     }
 
     /**

@@ -65,7 +65,7 @@ async function caseA (repoCtx) {
 async function caseB (repoCtx) {
     const ids = (await repoCtx.getDocumentsByQuery(ordersNamespace, '*')).map(
         ({ value }) => ({
-            workplaceId: value['workplaceId'],
+            transportCompanyId: value['transportCompanyId'],
             vehicleId: value['vehicleId'],
         })
     );
@@ -80,7 +80,7 @@ async function caseB (repoCtx) {
         const vehicleRow = vehiclesMap.get(item.vehicleId);
         const transportCompanyRow = transportCompaniesMap.get(item.transportCompanyId);
 
-        if (vehicleRow['address'] == transportCompanyRow['address'] && !duplicateTemp.has(vehicleRow['id'])) {
+        if (vehicleRow['address'] === transportCompanyRow['address'] && !duplicateTemp.has(vehicleRow['id'])) {
             result.push({
                 id: vehicleRow['id'],
                 type: vehicleRow['type']
