@@ -12,7 +12,15 @@ export const TableBuilder = ({ data }) => {
         return <p className="table__empty">Нет данных для отображения.</p>;
     }
 
-    const headers = Object.keys(data[0]);
+    let normalizedData = data;
+    if (Array.isArray(data) && typeof data[0] !== 'object') {
+        normalizedData = data.map((element, i) => ({
+            id: i,
+            value: element
+        }));
+    }
+
+    const headers = Object.keys(normalizedData[0]);
 
     return (
         <table className="table">
@@ -24,7 +32,7 @@ export const TableBuilder = ({ data }) => {
                 </tr>
             </thead>
             <tbody className="table__body">
-                {data.map((row, rowIndex) => (
+                {normalizedData.map((row, rowIndex) => (
                     <tr className="table__body-row" key={rowIndex}>
                         {headers.map((header, cellIndex) => (
                             <td key={cellIndex} className="table__body-cell">{row[header]}</td>
