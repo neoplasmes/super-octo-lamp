@@ -1,11 +1,24 @@
 import { RedisJsonRepo } from '../repositories/redisJsonRepo.js';
 import { SchemaFieldTypes } from 'redis';
 
-export const mockTableIndexPrefix = 'dynamic/'
+export const mockTableIndexPrefix = 'dynamic_'
 //Тут опять же надо инжектить репозиторий, а не тупо вставлять его, но сейчас не то время и нет тайпскрипта
 export class MockTableService {
+    /**
+     * 
+     * @param {string} str 
+     * @returns 
+     */
     _withMockTablePrefix(str) {
         return mockTableIndexPrefix + str;
+    }
+
+    /**
+     * @param {string} str 
+     * @returns {boolean}
+     */
+    checkMockPrefix(str) {
+        return str.includes(mockTableIndexPrefix);
     }
 
     constructor() {
@@ -58,16 +71,17 @@ export class MockTableService {
      * @returns {Promise.<void>}
      */
     async createTable(tableName, tableSchema) {
+        //При создании таблицы - т.е. индекса мы добавляем "idx:""
         await this.repository.createIndex(this._withMockTablePrefix(tableName), tableSchema);
     }
 
     /**
      * Удаляет индекс и все связанные документы.
-     * @param {string} tableName
+     * @param {string} indexName начинается с idx:
      */
-    async deleteTable(tableName) {
+    async deleteTable(indexName) {
         return await this.repository.deleteIndex(
-            this._withMockTablePrefix(tableName),
+            indexName,
             true, //флаг true - значит включена опция DROP DOCUMENTS (сокр. DD (DEAD DYNASTY))
         );
     }
@@ -80,8 +94,27 @@ export class MockTableService {
      */
     async selectFromTable(tableName, query) {
         return await this.repository.getDocumentsByQuery(
-            this._withMockTablePrefix(tableName),
+            tableName,
             query,
+        );
+    }
+
+    async insertToTable(tableName, data) {
+        const keys = await this.repository.redisClient.keys(`${tableName}:*`);
+
+        let maxId = 0;
+        if (keys.length > 0) {
+            maxId = Math.max(...keys.map(key => {
+                console.log(key.split(':').at(-1));
+
+                return parseInt(key.split(':').at(-1), 10)
+            }));
+        }
+
+        await this.repository.createOrReplaceDocument(
+            tableName,
+            maxId + 1,
+            data
         );
     }
 
@@ -93,20 +126,20 @@ export class MockTableService {
      */
     async deleteFromTable(tableName, query) {
         return await this.repository.deleteDocumentsByQuery(
-            this._withMockTablePrefix(tableName),
+            tableName,
             query,
         );
     }
 
     /**
      * Обновление кортежа по заданному условию
-     * @param {string} namespace 
+     * @param {string} tableName 
      * @param {string} whereQuery 
      * @param {Object.<string, string | number | UpdateFunction>} updateInstructions ключ - название поля (типо колонки), значение - новое значение
      */
     async updateInTable(tableName, whereQuery, updateInstructions) {
         return await this.repository.updateDocuments(
-            this._withMockTablePrefix(tableName), 
+            tableName, 
             whereQuery, 
             updateInstructions,
         );

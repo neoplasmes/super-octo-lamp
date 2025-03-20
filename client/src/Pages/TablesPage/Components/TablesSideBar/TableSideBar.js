@@ -26,9 +26,8 @@ const createTableRequest = async (requestBody) => {
         throw new Error(await response.json());
     }
 
-    return response;
+    return await response.json();
 }
-
 
 /**
  * Сайдбар для отображения списка созданных таблиц

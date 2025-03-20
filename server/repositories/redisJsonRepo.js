@@ -156,7 +156,11 @@ export class RedisJsonRepo {
      * @returns {Promise<ActualRetrievedJSON>}
      */
     async getDocumentsByQuery(namespace, query) {
+        console.log(this.withIdx(namespace), query);
+
         const {documents} = await this.redisClient.ft.search(this.withIdx(namespace), query);
+
+        console.log(documents);
 
         return documents;
     }
