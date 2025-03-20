@@ -1,5 +1,6 @@
 import { RedisJsonRepo } from '../redisJsonRepo.js';
 import { exerciseEleven } from './exerciseEleven/exerciseEleven.js';
+import { exerciseFifteen } from './exerciseFifteen/exerciseFifteen.js';
 import { exerciseFive } from './exerciseFive/exerciseFive.js';
 import { exerciseFour } from './exerciseFour/exerciseFour.js';
 import { exerciseFourteen } from './exerciseFourteen/exerciseFourteen.js';
@@ -23,6 +24,7 @@ export class AdvancedCasesRepo extends RedisJsonRepo {
         '11': exerciseEleven,
         '12': exerciseTwelve,
         '13': exerciseThirteen,
-        '14': exerciseFourteen
+        '14': exerciseFourteen,
+        '15': exerciseFifteen
     }
 }
