@@ -4,6 +4,9 @@ import { CasesService } from './services/casesService.js';
 import { workplacesNamespace } from './model/workplaces.js';
 import { mockTableController } from './controllers/mockTableController.js';
 import { casesController } from './controllers/casesController.js';
+import { transportCompaniesNamespace } from './model/transportCompanies.js';
+import { ordersNamespace } from './model/orders.js';
+import { vehiclesNamespace } from './model/vehicles.js';
 
 const app = express();
 
@@ -24,8 +27,11 @@ app.get('/', (req, res) => {
 });
 
 const test = new CasesService();
-await test.repository.redisClient.flushAll();
-await test.createInitialData(); 
+await test.repository.deleteIndex(workplacesNamespace, true);
+await test.repository.deleteIndex(transportCompaniesNamespace, true);
+await test.repository.deleteIndex(ordersNamespace, true);
+await test.repository.deleteIndex(vehiclesNamespace, true);
+await test.createInitialData();
 
 // await test.repository.updateDocuments(workplacesNamespace, '@benefit:[0 0]', {
 //     name: str => str + 'функция работает',

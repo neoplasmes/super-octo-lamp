@@ -1,4 +1,5 @@
-import { RedisJsonRepo } from '../repositories/RedisJsonRepo.js';
+import { RedisJsonRepo } from '../repositories/redisJsonRepo.js';
+import { SchemaFieldTypes } from 'redis';
 
 export const mockTableIndexPrefix = 'dynamic/'
 //Тут опять же надо инжектить репозиторий, а не тупо вставлять его, но сейчас не то время и нет тайпскрипта
@@ -19,11 +20,15 @@ export class MockTableService {
     async getTablesInfo() {
         const generalList = await this.repository.listIndexes();
 
+        console.log(generalList);
+
         if (generalList.length === 0) {
             return [];
         }
 
         const listOfDynamicTables = generalList.filter(name => name.includes(mockTableIndexPrefix))
+
+        console.log(listOfDynamicTables);
 
         const infoList = await Promise.all(
             listOfDynamicTables.map(name => this.repository.getIndexInfo(name)),

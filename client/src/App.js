@@ -16,7 +16,7 @@ export const App = () => {
                     <NavBar />
                     <Routes>
                         <Route path='/cases/*' element={<CasesPage />}/>
-                        <Route path='/tables' element={<TablesPage />}/>
+                        <Route path='/tables/*' element={<TablesPage />}/>
                     </Routes>
                 </div>
             </BrowserRouter>

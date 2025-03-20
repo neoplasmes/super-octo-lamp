@@ -17,6 +17,8 @@ const mockTableService = new MockTableService();
  * 3. схему таблицы (имя: тип)
  */
 mockTableRouter.get('/', async (req, res) => {
+    console.log(new Date())
+
     const tablesInfo = await mockTableService.getTablesInfo();
 
     return res.status(200).json(tablesInfo);
@@ -32,6 +34,8 @@ mockTableRouter.get('/', async (req, res) => {
  */
 mockTableRouter.post('/create', async (req, res) => {
     const requestBody = req.body;
+
+    console.log(requestBody)
 
     try {
         await mockTableService.createTable(

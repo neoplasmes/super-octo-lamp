@@ -1,8 +1,12 @@
-.cases-page {
+.tables-page {
     display: flex;
     flex-direction: row;
     /*justify-content: space-between;*/
     gap: 4rem;
+
+    width: 100%;
+
+    justify-content: space-between;
 
     max-height: calc(100% - 2rem);
     flex: 1;

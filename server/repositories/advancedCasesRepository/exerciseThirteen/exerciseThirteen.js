@@ -126,7 +126,7 @@ async function caseC (repoCtx) {
     //3: сделаем query чтоб просить тока id, которые мы получили выше
     const vehicleIdsQuery = vehicleIdsWithWorkplacesList.results.map(({ vehicleId }) => `@id:[${vehicleId} ${vehicleId}]`).join(' | ');
     
-    return await repoCtx.getDocumentsByQuery(vehiclesNamespace, vehicleIdsQuery).map(({ value }) => value);
+    return (await repoCtx.getDocumentsByQuery(vehiclesNamespace, vehicleIdsQuery)).map(({ value }) => value);
 }
 
 

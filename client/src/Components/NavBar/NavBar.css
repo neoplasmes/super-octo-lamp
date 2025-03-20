@@ -3,4 +3,7 @@
     flex-direction: row;
     gap: 4rem;
     justify-content: center;
+    align-items: center;
+    height: 2rem;
+    min-height: 2rem;
 }

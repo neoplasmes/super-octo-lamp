@@ -69,7 +69,15 @@ export class RedisJsonRepo {
      * @returns информация об индексе
      */
     async getIndexInfo(indexName) {
-        return await this.redisClient.ft.info(this.withIdx(indexName));
+        let newIndexName;
+
+        if (indexName.startsWith('idx:')) {
+            newIndexName = indexName;
+        } else {
+            newIndexName = this.withIdx(indexName);
+        }
+
+        return await this.redisClient.ft.info(newIndexName);
     }
 
     /**

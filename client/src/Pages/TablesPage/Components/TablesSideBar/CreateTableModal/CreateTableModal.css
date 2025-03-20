@@ -1,0 +1,99 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 10px 20px 20px 20px;
+    border-radius: 4px;
+    z-index: 1001;
+    min-width: 500px;
+
+
+    display: flex;
+    flex-direction: column;
+}
+
+.modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-close {
+    border: none;
+    background: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal__prop-window {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.field-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.field-row input,
+.field-row select {
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.field-row input:focus,
+.field-row select:focus {
+    outline: none;
+    border-color: #666;
+}
+
+.remove-field {
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #eee;
+    color: #666;
+    font-size: 16px;
+}
+
+.add-field {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #333;
+    color: #fff;
+    font-size: 16px;
+    align-self: center;
+}
+
+.create-table {
+    background: #333;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
