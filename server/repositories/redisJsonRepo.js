@@ -153,6 +153,27 @@ export class RedisJsonRepo {
         return documents;
     }
 
+
+    /**
+     * экспериментальный метод для ускорения извлечения только нужных данных
+     * @param {string} namespace 
+     * @param {string} query 
+     * @param {string[]} fields 
+     * @returns {Promise<Object<string, string | number>[]>}
+     */
+    async getDocumentsByQueryExperimental(namespace, query, fields = undefined) {
+        const {documents} = await this.redisClient.ft.search(this.withIdx(namespace), query);
+        
+        let mappingFunction = doc => doc.value;
+        if (fields) {
+            // Experimental. Типо мы один раз обходим ключи, а не несколько
+            const stringToInject = '{' + fields.map(field => `${field}: doc.value.${field}`).join(',') + '}';
+            mappingFunction = new Function('doc', `return ${stringToInject}`);
+        }
+
+        return documents.map(mappingFunction);
+    }
+
     /**
      * Функция делает запрос необходимых документов и превращает их в объект Map структуры 'id': 'data'.
      * Выбрана map чтобы было удобно доставать данные по id и для оптимизации скорости этого извлечения по id.
